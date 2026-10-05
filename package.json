@@ -1,0 +1,22 @@
+{
+  "name": "simulasi-fisika",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build-all.mjs",
+    "dev": "vite --host 0.0.0.0"
+  },
+  "dependencies": {
+    "three": "^0.180.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.180.0",
+    "@types/webxr": "^0.5.22",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.9"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
