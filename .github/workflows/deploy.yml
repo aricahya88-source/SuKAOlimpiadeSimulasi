@@ -1,0 +1,54 @@
+name: Deploy simulasi ke GitHub Pages
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependency
+        run: npm ci
+      - name: Build semua simulasi
+        run: npm run build
+      - name: Buat katalog GitHub Pages
+        run: |
+          mkdir -p site
+          cat > site/index.html <<'HTML'
+          <!doctype html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Simulasi Fisika</title><style>body{font:16px system-ui;max-width:900px;margin:40px auto;padding:0 20px;background:#0b1220;color:#e8eefc}a{color:#79b8ff}li{margin:12px 0}</style></head><body><h1>Simulasi Fisika</h1><p>Pilih simulasi:</p><ul><li><a href="parabola/">Gerak parabola</a></li><li><a href="bidang-miring/">Gaya gesek bidang miring</a></li><li><a href="tumbukan/">Tumbukan</a></li><li><a href="melingkar/">Gerak melingkar</a></li><li><a href="hooke/">Hukum Hooke</a></li><li><a href="venturi/">Venturi-Bernoulli</a></li><li><a href="bandul/">Bandul sederhana</a></li><li><a href="gelombang/">Gelombang tali</a></li><li><a href="kalor/">Kalor dan energi</a></li><li><a href="induksi/">Induksi elektromagnetik</a></li></ul></body></html>
+          HTML
+          for app in parabola bidang-miring tumbukan melingkar hooke venturi bandul gelombang kalor induksi; do cp -R "apps/$app/dist" "site/$app"; done
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
