@@ -3,3 +3,71 @@
 .tabs{display:none}
 
 :root{--bg:#f4f7f9;--panel:#ffffff;--line:#d7e0e5;--muted:#52636b;--text:#17252b}html[data-theme=dark]{--bg:#0a100d;--panel:#141d18;--line:#2b3b31;--muted:#91a59a;--text:#edf5ef}body{transition:background .2s,color .2s}.theme-toggle{background:var(--panel);border:1px solid var(--line);color:var(--text);border-radius:4px;padding:8px 11px;font-size:11px;cursor:pointer}.theme-toggle:hover{border-color:#2f9db0}html[data-theme=dark] .theme-toggle{background:#18271f;color:#edf5ef}
+
+
+/* SuKa light-shell lock: antarmuka terang, viewport simulasi tetap gelap */
+:root,
+html[data-theme="dark"] {
+  --bg:#f4f7f9;
+  --panel:#ffffff;
+  --line:#d7e0e5;
+  --muted:#52636b;
+  --text:#17252b;
+}
+body { background:var(--bg); color:var(--text); color-scheme:light; }
+.theme-toggle { display:none !important; }
+
+/* Permukaan UI yang sebelumnya hard-coded gelap */
+.tabs button.active,
+.modes button,
+.modes button.active,
+.stats div,
+.geometry div,
+.statebox,
+.question,
+.event,
+.hint,
+.energy > div,
+.formula > div,
+.controls select,
+select,
+.secondary,
+.options button {
+  background:#f3f7f8 !important;
+  color:var(--text);
+}
+.controls select,
+select,
+.options button { border-color:var(--line) !important; }
+.secondary:hover,
+.options button:hover,
+.options button.selected { background:#eaf2f4 !important; }
+.question,
+.event,
+.hint,
+.statebox { color:var(--muted); }
+.stats b,
+.geometry b,
+.controls output,
+.readout b { color:var(--text); }
+
+/* Area eksperimen sengaja tetap gelap */
+.viewport {
+  background:#0d1215 !important;
+  border-color:#27363b !important;
+  color:#e8f0ef;
+  color-scheme:dark;
+}
+.viewport .hud,
+.viewport .overlay,
+.viewport .stage-overlay,
+.viewport .axis,
+.viewport .axis-label,
+.viewport .labels div {
+  color:#a9babd !important;
+}
+.viewport .hud span:first-child,
+.viewport .overlay span:last-child,
+.viewport .stage-overlay span:last-child {
+  color:var(--cyan, var(--lime, #65d8e3)) !important;
+}

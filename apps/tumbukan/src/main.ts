@@ -20,4 +20,4 @@ document.querySelectorAll<HTMLSelectElement>('select[data-key]').forEach(sel=>se
 }
 main();
 
-const themeToggle=document.querySelector<HTMLButtonElement>('#themeToggle'); const savedTheme=localStorage.getItem('simulasi-theme')||'light'; document.documentElement.dataset.theme=savedTheme; if(themeToggle){themeToggle.textContent=savedTheme==='dark'?'Mode Terang':'Mode Gelap'; themeToggle.addEventListener('click',()=>{const next=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=next;localStorage.setItem('simulasi-theme',next);themeToggle.textContent=next==='dark'?'Mode Terang':'Mode Gelap';});}
+document.documentElement.dataset.theme='light'; localStorage.setItem('simulasi-theme','light'); document.querySelector<HTMLButtonElement>('#themeToggle')?.remove();
