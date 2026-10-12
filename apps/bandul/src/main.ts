@@ -1,20 +1,262 @@
 import './style.css';
 import * as THREE from 'three';
-import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
-type Kind='venturi'|'pendulum'|'wave'|'heat'|'induction';
-const specs:any={venturi:['Fluida Venturi & Bernoulli',['Luas penampang','Debit aliran','Ketinggian'],['cm²','L/s','m'],[2,4,0]],pendulum:['Bandul sederhana',['Panjang tali','Sudut awal','Massa'],['m','°','kg'],[2,25,1]],wave:['Gelombang pada tali',['Amplitudo','Frekuensi','Tegangan'],['cm','Hz','N'],[.4,1,25]],heat:['Kalor & energi',['Massa air','Suhu awal','Daya'],['kg','°C','W'],[1,25,500]],induction:['Induksi elektromagnetik',['Jumlah lilitan','Kecepatan magnet','Kuat magnet'],['lilitan','m/s','T'],[80,1,.5]]};
-let kind:Kind='pendulum',vals=[...specs[kind][3]],running=true,t=0,last=performance.now();const $=<T extends HTMLElement=HTMLElement>(s:string)=>document.querySelector<T>(s)!;const f=(v:number)=>v.toFixed(2).replace('.',',');
-$('body');
-function html(){return `<div class="shell"><header><div class="brand"><span class="mark">✦</span><div><b>Physics Lab</b><small>Lima simulasi praktikum 3D</small></div></div><button id="reset" class="ghost">Reset</button><button id="themeToggle" class="theme-toggle" type="button">Mode Gelap</button></header><nav class="tabs">${(Object.keys(specs) as Kind[]).map((k,i)=>`<button data-kind="${k}" class="${k===kind?'active':''}">0${i+1} · ${specs[k][0]}</button>`).join('')}</nav><main class="layout"><aside class="left"><section class="panel controls"><div class="eyebrow">VARIABEL PERCOBAAN</div><div class="actions"><button id="pause" class="secondary">Jeda</button><button id="apply" class="primary">Terapkan</button></div><div id="fields"></div><div class="toggles"><label><span>Jejak / partikel</span><input id="trail" type="checkbox" checked></label><label><span>Vektor / medan</span><input id="vectors" type="checkbox" checked></label></div></section><section class="panel analysis"><div class="eyebrow">ANALISIS LANGSUNG</div><div id="stats" class="stats"></div><div id="formula" class="formula"></div></section></aside><section class="panel stage"><div class="stagebar"><span class="tag">3D VIEWPORT · 16:9 · WEBGL</span><span id="status">BERJALAN</span></div><div id="viewport" class="viewport"><div class="hud"><span id="hudL"></span><span id="hudR"></span></div></div><div id="legend" class="legend"></div><div class="question"><b>Pertanyaan eksperimen</b><p id="question"></p></div></section></main><footer><span>SUKA OLIMPIADE FISIKA</span><span>Three.js · Eksperimen interaktif</span></footer></div>`}
-$('body').innerHTML=html();const viewport=$<HTMLElement>('#viewport'),scene=new THREE.Scene();scene.background=new THREE.Color(0x101a16);const cam=new THREE.PerspectiveCamera(45,1,.1,100);cam.position.set(6,5,7);const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));viewport.appendChild(renderer.domElement);const orbit=new OrbitControls(cam,renderer.domElement);orbit.enableDamping=true;orbit.target.set(0,0,0);scene.add(new THREE.HemisphereLight(0xeafff4,0x26382d,2));const lamp=new THREE.DirectionalLight(0xffffff,3);lamp.position.set(4,8,5);scene.add(lamp);const root=new THREE.Group();scene.add(root);const material=(c:number)=>new THREE.MeshStandardMaterial({color:c,roughness:.35,metalness:.15});function clear(){root.clear()}
-function build(){clear();const s=specs[kind];$('#fields').innerHTML=s[1].map((x:string,i:number)=>`<label>${x}<output id="o${i}">${f(vals[i])} ${s[2][i]}</output><input data-i="${i}" type="range" min="${i===0?.1:1}" max="${i===0?4:i===1?8:50}" step="${i===0?.1:1}" value="${vals[i]}"></label>`).join('');$('#question').textContent=kind==='venturi'?'Pada bagian sempit, bagaimana perubahan kecepatan dan tekanan?':kind==='pendulum'?'Apakah massa mengubah periode bandul?':kind==='wave'?'Bagaimana perubahan panjang gelombang saat frekuensi dinaikkan?':kind==='heat'?'Apa dampak penggandaan daya pada laju kenaikan suhu?':'Kapan GGL induksi paling besar?';$('#formula').innerHTML='<b>'+({venturi:'A₁v₁ = A₂v₂',pendulum:'T = 2π√(L/g)',wave:'v = fλ',heat:'Q = mcΔT',induction:'ε = −N ΔΦ/Δt'} as any)[kind]+'</b>';let text='';
-if(kind==='venturi'){for(let i=0;i<14;i++){const q=new THREE.Mesh(new THREE.SphereGeometry(.07,8,8),material(0x65d8e3));q.userData.i=i;root.add(q)}const pipe=new THREE.Mesh(new THREE.BoxGeometry(6,.7,1.2),material(0x2e7582));pipe.position.y=-.2;root.add(pipe);text='Pipa Venturi · Partikel fluida · Penampang sempit'}
-if(kind==='pendulum'){const pvt=new THREE.Mesh(new THREE.SphereGeometry(.12,16,12),material(0xbdd44a));pvt.position.y=2.5;root.add(pvt);const rod=new THREE.Mesh(new THREE.CylinderGeometry(.03,.03,2.4,12),material(0xd0d8d2));rod.userData.rod=true;root.add(rod);const bob=new THREE.Mesh(new THREE.SphereGeometry(.3,24,16),material(0x65d8e3));bob.userData.bob=true;root.add(bob);text='Bandul · Posisi setimbang · Sudut awal'}
-if(kind==='wave'){for(let i=0;i<45;i++){const q=new THREE.Mesh(new THREE.SphereGeometry(.08,8,8),material(0x65d8e3));q.userData.i=i;root.add(q)}text='Tali · Partikel gelombang · Arah rambat'}
-if(kind==='heat'){const box=new THREE.Mesh(new THREE.BoxGeometry(4,2.5,2.3),new THREE.MeshStandardMaterial({color:0x4f91a0,transparent:true,opacity:.18}));box.position.y=.8;root.add(box);for(let i=0;i<28;i++){const q=new THREE.Mesh(new THREE.SphereGeometry(.08,8,8),material(0xf39b68));q.userData.i=i;q.position.set((i%7-3)*.45,(Math.floor(i/7)%4)*.35,(i%4-1.5)*.4);root.add(q)}text='Wadah air · Partikel termal · Pemanas'}
-if(kind==='induction'){const coil=new THREE.Mesh(new THREE.TorusGeometry(1.1,.08,12,64),material(0xf39b68));coil.rotation.x=Math.PI/2;root.add(coil);const magnet=new THREE.Mesh(new THREE.CylinderGeometry(.25,.25,.9,24),material(0xbcd0d2));magnet.rotation.z=Math.PI/2;magnet.userData.magnet=true;root.add(magnet);text='Kumparan · Magnet batang · Garis fluks'}$('#legend').textContent=text;document.querySelectorAll<HTMLInputElement>('[data-i]').forEach(i=>i.addEventListener('input',()=>{vals[Number(i.dataset.i)]=Number(i.value);$('#o'+i.dataset.i).textContent=f(vals[Number(i.dataset.i)])+' '+s[2][Number(i.dataset.i)];build()}));document.querySelectorAll<HTMLButtonElement>('[data-kind]').forEach(b=>b.classList.toggle('active',b.dataset.kind===kind));ui()}
-function ui(){const a=vals[0],b=vals[1],c=vals[2];let rows:any[]=[];if(kind==='venturi')rows=[['v₁',f(b/a*.4)+' m/s'],['v₂',f(b/a*.8)+' m/s'],['ΔP',f((b/a)**2)+' unit']];if(kind==='pendulum'){const T=2*Math.PI*Math.sqrt(a/9.81);rows=[['Periode',f(T)+' s'],['Frekuensi',f(1/T)+' Hz'],['Simpangan',f(a*Math.sin(c*Math.PI/180)*100)+' cm']]}if(kind==='wave'){const v=Math.sqrt(c);rows=[['Cepat rambat',f(v)+' m/s'],['Panjang λ',f(v/b)+' m'],['Periode',f(1/b)+' s']]}if(kind==='heat'){rows=[['Suhu model',f(25+c*t/(a*4180))+' °C'],['Laju ΔT',f(c/(a*4180)*60)+' °C/menit'],['Energi',f(c*t)+' J']]}if(kind==='induction')rows=[['GGL relatif',f(a*b*c*.8)+' V'],['Fluks',f(b*c)+' Wb'],['Status',b>0?'bergerak':'diam']];$('#stats').innerHTML=rows.map(r=>`<div><span>${r[0]}</span><b>${r[1].split(' ')[0]}</b><small>${r[1].split(' ').slice(1).join(' ')}</small></div>`).join('');$('#hudL').textContent=specs[kind][0];$('#hudR').textContent=kind==='heat'?'t = '+f(t)+' s':'Eksperimen aktif';$('#status').textContent=running?'BERJALAN':'DIJEDA'}
-function animate(){const now=performance.now(),dt=Math.min(.05,(now-last)/1000);last=now;if(running)t+=dt;const a=vals[0],b=vals[1],c=vals[2];if(kind==='venturi')root.children.forEach((x:any)=>{if(x.userData.i!==undefined)x.position.set(((x.userData.i+t*b*.8)%14)-7,0,((x.userData.i*1.7)%3-1)*.25)});if(kind==='pendulum'){const ang=c*Math.PI/180*Math.cos(Math.sqrt(9.81/a)*t),rod=root.children.find((x:any)=>x.userData.rod),bob=root.children.find((x:any)=>x.userData.bob);if(rod&&bob){rod.position.set(Math.sin(ang)*a*.6,2.5-Math.cos(ang)*a*.6,0);rod.rotation.z=ang;bob.position.set(Math.sin(ang)*a*1.2,2.5-Math.cos(ang)*a*1.2,0)}}if(kind==='wave')root.children.forEach((x:any)=>{if(x.userData.i!==undefined){const xx=-3+x.userData.i*6/44;x.position.set(xx,-.2+Math.sin(x.userData.i/44*Math.PI*5-b*t*3)*a,0)}});if(kind==='heat')root.children.forEach((x:any)=>{if(x.userData.i!==undefined){x.position.x+=Math.sin(t*2+x.userData.i)*dt*.08;x.position.z+=Math.cos(t*1.7+x.userData.i)*dt*.08}});if(kind==='induction'){const m=root.children.find((x:any)=>x.userData.magnet);if(m)m.position.x=Math.sin(t*b)*1.8}orbit.update();renderer.render(scene,cam);ui();requestAnimationFrame(animate)}
-document.querySelectorAll<HTMLButtonElement>('[data-kind]').forEach(b=>b.addEventListener('click',()=>{kind=b.dataset.kind as Kind;vals=[...specs[kind][3]];t=0;build()}));$('#pause').addEventListener('click',e=>{running=!running;(e.currentTarget as HTMLButtonElement).textContent=running?'Jeda':'Lanjutkan';ui()});$('#apply').addEventListener('click',()=>{t=0;running=true;$('#pause').textContent='Jeda';build()});$('#reset').addEventListener('click',()=>location.reload());new ResizeObserver(()=>{const r=viewport.getBoundingClientRect();renderer.setSize(r.width,r.height,false);cam.aspect=r.width/Math.max(r.height,1);cam.updateProjectionMatrix()}).observe(viewport);build();const r=viewport.getBoundingClientRect();renderer.setSize(r.width,r.height,false);animate();
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
-document.documentElement.dataset.theme='light'; localStorage.setItem('simulasi-theme','light'); document.querySelector<HTMLButtonElement>('#themeToggle')?.remove();
+type PendulumState = {
+  length: number;
+  angleDeg: number;
+  mass: number;
+  diameterCm: number;
+};
+
+const state: PendulumState = { length: 2, angleDeg: 25, mass: 1, diameterCm: 30 };
+let running = true;
+let t = 0;
+let last = performance.now();
+let trailEnabled = true;
+
+const $ = <T extends HTMLElement = HTMLElement>(selector: string) => document.querySelector<T>(selector)!;
+const fmt = (value: number, digits = 2) => value.toFixed(digits).replace('.', ',');
+
+document.documentElement.dataset.theme = 'light';
+document.body.innerHTML = `
+<div class="shell">
+  <header>
+    <div class="brand"><span class="mark">✦</span><div><b>Bandul Matematis</b><small>SuKa Olimpiade Fisika · Simulasi 3D</small></div></div>
+    <button id="reset" class="ghost" type="button">Reset</button>
+  </header>
+  <main class="layout">
+    <aside class="left">
+      <section class="panel controls">
+        <div class="eyebrow">PARAMETER PERCOBAAN</div>
+        <div class="actions"><button id="pause" class="secondary" type="button">Jeda</button><button id="apply" class="primary" type="button">Terapkan</button></div>
+        <label>Panjang tali <output id="outLength"></output><input id="length" type="range" min="0.50" max="3.00" step="0.05"></label>
+        <label>Sudut awal <output id="outAngle"></output><input id="angle" type="range" min="5" max="60" step="1"></label>
+        <label>Massa bandul <output id="outMass"></output><input id="mass" type="range" min="0.10" max="3.00" step="0.10"></label>
+        <label>Ukuran bandul (diameter) <output id="outSize"></output><input id="size" type="range" min="12" max="60" step="1"></label>
+        <div class="toggles"><label><span>Tampilkan jejak gerak</span><input id="trail" type="checkbox" checked></label></div>
+      </section>
+      <section class="panel analysis">
+        <div class="eyebrow">ANALISIS LANGSUNG</div>
+        <div id="stats" class="stats"></div>
+        <div class="formula"><b>T = 2π√(L/g)</b><span>Model ideal: tali ringan, hambatan udara diabaikan.</span></div>
+      </section>
+    </aside>
+    <section class="panel stage">
+      <div class="stagebar"><span class="tag">3D VIEWPORT · ATAP + TITIK GANTUNG</span><span id="status">BERJALAN</span></div>
+      <div id="viewport" class="viewport"><div class="hud"><span>Bandul matematis</span><span id="hudRight"></span></div></div>
+      <div class="legend">Atap / penyangga · Titik gantung · Tali · Bola bandul · Garis setimbang</div>
+      <div class="question"><b>Eksperimen</b><p>Ubah panjang tali, sudut awal, massa, dan diameter bandul. Amati parameter mana yang mengubah periode osilasi pada model bandul ideal.</p></div>
+    </section>
+  </main>
+  <footer><span>SUKA OLIMPIADE FISIKA</span><span>Three.js · UI terang, viewport gelap</span></footer>
+</div>`;
+
+const viewport = $('#viewport');
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0b1216);
+scene.fog = new THREE.Fog(0x0b1216, 10, 22);
+
+const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+camera.position.set(5.8, 4.6, 7.5);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.6));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+viewport.appendChild(renderer.domElement);
+
+const orbit = new OrbitControls(camera, renderer.domElement);
+orbit.enableDamping = true;
+orbit.target.set(0, 1.35, 0);
+orbit.minDistance = 4.5;
+orbit.maxDistance = 12;
+
+scene.add(new THREE.HemisphereLight(0xdff8ff, 0x253039, 1.7));
+const key = new THREE.DirectionalLight(0xffffff, 2.6);
+key.position.set(4, 8, 5);
+key.castShadow = true;
+scene.add(key);
+
+const root = new THREE.Group();
+scene.add(root);
+
+const mat = (color: number, roughness = 0.42, metalness = 0.12) => new THREE.MeshStandardMaterial({ color, roughness, metalness });
+const roofMaterial = mat(0x6b747c, 0.62, 0.32);
+const supportMaterial = mat(0x9ba8af, 0.4, 0.55);
+const bobMaterial = mat(0x58d0dd, 0.28, 0.2);
+
+// Lantai referensi
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(10, 7), new THREE.MeshStandardMaterial({ color: 0x111b20, roughness: 0.95 }));
+floor.rotation.x = -Math.PI / 2;
+floor.position.y = -0.05;
+floor.receiveShadow = true;
+root.add(floor);
+const grid = new THREE.GridHelper(10, 20, 0x2d4a52, 0x1d2e34);
+grid.position.y = -0.045;
+root.add(grid);
+
+// Atap / penyangga
+const roof = new THREE.Mesh(new THREE.BoxGeometry(4.8, 0.22, 2.0), roofMaterial);
+roof.position.set(0, 3.55, 0);
+roof.castShadow = true;
+root.add(roof);
+const roofTop = new THREE.Mesh(new THREE.BoxGeometry(5.2, 0.10, 2.35), mat(0x3d4850, 0.75, 0.25));
+roofTop.position.set(0, 3.70, 0);
+roofTop.castShadow = true;
+root.add(roofTop);
+
+const pivotY = 3.37;
+const hook = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.32, 20), supportMaterial);
+hook.position.set(0, 3.36, 0);
+hook.castShadow = true;
+root.add(hook);
+const pivot = new THREE.Mesh(new THREE.SphereGeometry(0.13, 24, 18), mat(0xbdd44a, 0.3, 0.2));
+pivot.position.set(0, pivotY, 0);
+pivot.castShadow = true;
+root.add(pivot);
+
+const stringGeometry = new THREE.BufferGeometry();
+const stringMaterial = new THREE.LineBasicMaterial({ color: 0xe6ecef });
+const stringLine = new THREE.Line(stringGeometry, stringMaterial);
+root.add(stringLine);
+
+const equilibriumGeometry = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, pivotY, 0), new THREE.Vector3(0, 0.25, 0)]);
+const equilibrium = new THREE.Line(equilibriumGeometry, new THREE.LineDashedMaterial({ color: 0x526c77, dashSize: 0.12, gapSize: 0.10 }));
+equilibrium.computeLineDistances();
+root.add(equilibrium);
+
+let bob = new THREE.Mesh(new THREE.SphereGeometry(0.15, 36, 24), bobMaterial);
+bob.castShadow = true;
+root.add(bob);
+
+const trailGeometry = new THREE.BufferGeometry();
+const trailLine = new THREE.Line(trailGeometry, new THREE.LineBasicMaterial({ color: 0x79e3ed, transparent: true, opacity: 0.55 }));
+root.add(trailLine);
+const trailPoints: THREE.Vector3[] = [];
+
+function rebuildBob(): void {
+  root.remove(bob);
+  bob.geometry.dispose();
+  const radius = state.diameterCm / 200;
+  bob = new THREE.Mesh(new THREE.SphereGeometry(radius, 36, 24), bobMaterial);
+  bob.castShadow = true;
+  bob.receiveShadow = true;
+  root.add(bob);
+  trailPoints.length = 0;
+}
+
+function updateOutputs(): void {
+  $('#outLength').textContent = `${fmt(state.length)} m`;
+  $('#outAngle').textContent = `${fmt(state.angleDeg, 0)}°`;
+  $('#outMass').textContent = `${fmt(state.mass)} kg`;
+  $('#outSize').textContent = `${fmt(state.diameterCm, 0)} cm`;
+}
+
+function updateStats(): void {
+  const g = 9.81;
+  const theta0 = THREE.MathUtils.degToRad(state.angleDeg);
+  const period = 2 * Math.PI * Math.sqrt(state.length / g);
+  const frequency = 1 / period;
+  const vmax = Math.sqrt(Math.max(0, 2 * g * state.length * (1 - Math.cos(theta0))));
+  const tensionBottom = state.mass * g + state.mass * vmax * vmax / state.length;
+  $('#stats').innerHTML = [
+    ['Periode', `${fmt(period)} s`],
+    ['Frekuensi', `${fmt(frequency)} Hz`],
+    ['v maks.', `${fmt(vmax)} m/s`],
+    ['Tegangan bawah', `${fmt(tensionBottom)} N`],
+  ].map(([label, value]) => `<div><span>${label}</span><b>${value.split(' ')[0]}</b><small>${value.split(' ').slice(1).join(' ')}</small></div>`).join('');
+  $('#hudRight').textContent = `t = ${fmt(t)} s · θ₀ = ${fmt(state.angleDeg, 0)}°`;
+  $('#status').textContent = running ? 'BERJALAN' : 'DIJEDA';
+}
+
+function updatePendulum(): void {
+  const omega = Math.sqrt(9.81 / state.length);
+  const theta = THREE.MathUtils.degToRad(state.angleDeg) * Math.cos(omega * t);
+  const bobPos = new THREE.Vector3(
+    state.length * Math.sin(theta),
+    pivotY - state.length * Math.cos(theta),
+    0,
+  );
+  bob.position.copy(bobPos);
+
+  stringGeometry.setFromPoints([new THREE.Vector3(0, pivotY, 0), bobPos]);
+
+  if (running && trailEnabled) {
+    const lastPoint = trailPoints.at(-1);
+    if (!lastPoint || lastPoint.distanceToSquared(bobPos) > 0.0008) {
+      trailPoints.push(bobPos.clone());
+      if (trailPoints.length > 180) trailPoints.shift();
+      trailGeometry.setFromPoints(trailPoints);
+    }
+  }
+  trailLine.visible = trailEnabled;
+}
+
+function bindRange(id: keyof Pick<PendulumState, 'length' | 'angleDeg' | 'mass' | 'diameterCm'>, selector: string): void {
+  const input = $<HTMLInputElement>(selector);
+  input.value = String(state[id]);
+  input.addEventListener('input', () => {
+    state[id] = Number(input.value);
+    if (id === 'diameterCm') rebuildBob();
+    trailPoints.length = 0;
+    trailGeometry.setFromPoints([]);
+    t = 0;
+    updateOutputs();
+    updateStats();
+    updatePendulum();
+  });
+}
+
+bindRange('length', '#length');
+bindRange('angleDeg', '#angle');
+bindRange('mass', '#mass');
+bindRange('diameterCm', '#size');
+
+$<HTMLInputElement>('#trail').addEventListener('change', (event) => {
+  trailEnabled = (event.currentTarget as HTMLInputElement).checked;
+  if (!trailEnabled) {
+    trailPoints.length = 0;
+    trailGeometry.setFromPoints([]);
+  }
+});
+
+$('#pause').addEventListener('click', (event) => {
+  running = !running;
+  (event.currentTarget as HTMLButtonElement).textContent = running ? 'Jeda' : 'Lanjutkan';
+  updateStats();
+});
+
+$('#apply').addEventListener('click', () => {
+  t = 0;
+  running = true;
+  $('#pause').textContent = 'Jeda';
+  trailPoints.length = 0;
+  trailGeometry.setFromPoints([]);
+});
+
+$('#reset').addEventListener('click', () => location.reload());
+
+new ResizeObserver(() => {
+  const rect = viewport.getBoundingClientRect();
+  renderer.setSize(rect.width, rect.height, false);
+  camera.aspect = rect.width / Math.max(rect.height, 1);
+  camera.updateProjectionMatrix();
+}).observe(viewport);
+
+function animate(): void {
+  const now = performance.now();
+  const dt = Math.min(0.05, (now - last) / 1000);
+  last = now;
+  if (running) t += dt;
+  updatePendulum();
+  updateStats();
+  orbit.update();
+  renderer.render(scene, camera);
+  requestAnimationFrame(animate);
+}
+
+updateOutputs();
+rebuildBob();
+updatePendulum();
+animate();

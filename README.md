@@ -1,6 +1,6 @@
-# Simulasi Fisika
+# SuKa Olimpiade Fisika — Simulasi
 
-Satu repository berisi sepuluh simulasi fisika interaktif berbasis Three.js. Setiap simulasi dibangun sebagai aplikasi mandiri dan diterbitkan pada alamatnya sendiri di GitHub Pages.
+Satu repository berisi **sembilan** simulasi fisika interaktif berbasis Three.js. Setiap simulasi dibangun sebagai aplikasi mandiri dan diterbitkan pada alamatnya sendiri di GitHub Pages. Antarmuka utama menggunakan mode terang, sedangkan viewport simulasi tetap gelap.
 
 ## Simulasi
 
@@ -12,21 +12,24 @@ Satu repository berisi sepuluh simulasi fisika interaktif berbasis Three.js. Set
 | Gerak melingkar | `/melingkar/` |
 | Hukum Hooke | `/hooke/` |
 | Venturi-Bernoulli | `/venturi/` |
-| Bandul sederhana | `/bandul/` |
-| Gelombang tali | `/gelombang/` |
-| Kalor dan energi | `/kalor/` |
-| Induksi elektromagnetik | `/induksi/` |
+| Bandul matematis | `/bandul/` |
+| Gelombang berjalan & stasioner | `/gelombang/` |
+| Kalor & perubahan wujud | `/kalor/` |
 
-Alamat lengkap berbentuk `https://USERNAME.github.io/NAMA-REPOSITORY/parabola/`.
+> Simulasi GGL/induksi elektromagnetik telah dihapus dari paket sesuai revisi.
+
+## Revisi animasi utama
+
+- **Bandul Matematis:** dilengkapi atap/penyangga, titik gantung, garis setimbang, jejak, serta parameter diameter bandul.
+- **Gelombang:** tersedia Gelombang Berjalan, Gelombang Stasioner Ujung Terikat, dan Gelombang Stasioner Ujung Bebas dengan visual kondisi batas yang berbeda.
+- **Kalor:** wadah transparan, pemanas, partikel termal, es, proses mencair, air cair, mendidih/menguap, dan uap. Model menggunakan kalor sensibel dan kalor laten sehingga suhu tertahan pada 0 °C dan 100 °C saat perubahan wujud.
 
 ## Deploy otomatis
 
-1. Buat repository baru di GitHub dan unggah seluruh isi folder ini (termasuk folder tersembunyi `.github`).
+1. Unggah seluruh isi folder ini ke repository GitHub (termasuk `.github`).
 2. Pastikan branch utama bernama `main` atau `master`.
 3. Buka **Settings → Pages → Build and deployment → Source**, pilih **GitHub Actions**.
-4. Push perubahan. Workflow `.github/workflows/deploy.yml` akan memasang dependency, membangun sepuluh aplikasi, lalu menerbitkan semuanya sebagai satu GitHub Pages site.
-
-Setelah workflow selesai, halaman utama menampilkan katalog tautan. Tidak ada server atau database yang diperlukan.
+4. Push perubahan. Workflow `.github/workflows/deploy.yml` akan memasang dependency, membangun sembilan aplikasi, lalu menerbitkannya sebagai satu GitHub Pages site.
 
 ## Lokal
 
@@ -35,4 +38,8 @@ npm install
 npm run build
 ```
 
-Untuk pengembangan satu aplikasi, jalankan `npm run dev --prefix apps/parabola` (ganti slug sesuai tabel).
+Untuk pengembangan satu aplikasi, jalankan misalnya:
+
+```bash
+npm run dev --prefix apps/bandul
+```
