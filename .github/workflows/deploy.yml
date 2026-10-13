@@ -1,90 +1,110 @@
-                background: #ffffff;
+
+      - name: Build semua simulasi
+        run: npm run build
+
+      - name: Siapkan artifact GitHub Pages
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          rm -rf site
+          mkdir -p site
+          touch site/.nojekyll
+
+          cat > site/index.html <<'HTML'
+          <!doctype html>
+          <html lang="id">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>SuKa Olimpiade Fisika — Simulasi</title>
+            <style>
+              * { box-sizing: border-box; }
+              body {
+                margin: 0;
+                font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+                background: #f8fafc;
+                color: #0f172a;
+              }
+              main {
+                width: min(960px, calc(100% - 32px));
+                margin: 0 auto;
+                padding: 48px 0;
+              }
+              h1 { margin: 0 0 8px; }
+              p { color: #64748b; margin: 0 0 28px; }
+              .grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                gap: 14px;
+              }
+              a {
+                display: block;
+                padding: 18px;
+                border: 1px solid #e2e8f0;
+                border-radius: 14px;
+                background: white;
                 color: #0f172a;
                 text-decoration: none;
                 font-weight: 700;
-                transition: transform .15s ease, border-color .15s ease;
               }
-
-              a:hover {
-                transform: translateY(-2px);
-                border-color: #94a3b8;
-              }
-
-              small {
-                display: block;
-                margin-top: 6px;
-                color: #64748b;
-                font-weight: 400;
-              }
+              a:hover { border-color: #94a3b8; }
             </style>
           </head>
           <body>
             <main>
-              <h1>SuKA Olimpiade Fisika</h1>
-              <p>Pilih simulasi fisika yang ingin dibuka.</p>
-
+              <h1>SuKa Olimpiade Fisika</h1>
+              <p>Pilih simulasi yang ingin dibuka.</p>
               <div class="grid">
-                <a href="./parabola/">
-                  Gerak Parabola
-                  <small>Kinematika dua dimensi</small>
-                </a>
-
-                <a href="./bidang-miring/">
-                  Gaya Gesek Bidang Miring
-                  <small>Gesek statis dan kinetis</small>
-                </a>
-
-                <a href="./tumbukan/">
-                  Tumbukan
-                  <small>Momentum dan restitusi</small>
-                </a>
-
-                <a href="./melingkar/">
-                  Gerak Melingkar
-                  <small>Gerak melingkar dan gaya sentripetal</small>
-                </a>
-
-                <a href="./hooke/">
-                  Hukum Hooke
-                  <small>Pegas dan osilasi</small>
-                </a>
-
-                <a href="./venturi/">
-                  Fluida
-                  <small>Venturi, Bernoulli, dan pancaran fluida</small>
-                </a>
-
-                <a href="./bandul/">
-                  Bandul Matematis
-                  <small>Periode dan osilasi bandul</small>
-                </a>
-
-                <a href="./gelombang/">
-                  Gelombang
-                  <small>Gelombang berjalan dan stasioner</small>
-                </a>
-
-                <a href="./kalor/">
-                  Kalor & Perubahan Wujud
-                  <small>Es, air, uap, dan partikel termal</small>
-                </a>
+                <a href="./parabola/">Gerak Parabola</a>
+                <a href="./bidang-miring/">Gaya Gesek Bidang Miring</a>
+                <a href="./tumbukan/">Tumbukan</a>
+                <a href="./melingkar/">Gerak Melingkar</a>
+                <a href="./hooke/">Hukum Hooke</a>
+                <a href="./venturi/">Fluida / Pancaran</a>
+                <a href="./bandul/">Bandul Matematis</a>
+                <a href="./gelombang/">Gelombang</a>
+                <a href="./kalor/">Kalor & Perubahan Wujud</a>
               </div>
             </main>
           </body>
           </html>
-          EOF
+          HTML
 
-          for app in             parabola             bidang-miring             tumbukan             melingkar             hooke             venturi             bandul             gelombang             kalor
-          do
-            if [ ! -d "apps/$app/dist" ]; then
-              echo "ERROR: apps/$app/dist tidak ditemukan."
+          APPS=(
+            parabola
+            bidang-miring
+            tumbukan
+            melingkar
+            hooke
+            venturi
+            bandul
+            gelombang
+            kalor
+          )
+
+          for app in "${APPS[@]}"; do
+            echo "Menyiapkan $app ..."
+
+            if [ ! -f "apps/$app/dist/index.html" ]; then
+              echo "ERROR: apps/$app/dist/index.html tidak ditemukan."
               exit 1
             fi
 
-            cp -R "apps/$app/dist" "site/$app"
+            mkdir -p "site/$app"
+            cp -R "apps/$app/dist/." "site/$app/"
+
+            if [ ! -f "site/$app/index.html" ]; then
+              echo "ERROR: site/$app/index.html gagal dibuat."
+              exit 1
+            fi
           done
 
-      - name: Configure GitHub Pages
+          echo ""
+          echo "Isi artifact:"
+          find site -maxdepth 2 -type f | sort
+
+      - name: Configure Pages
         uses: actions/configure-pages@v5
 
       - name: Upload Pages artifact
