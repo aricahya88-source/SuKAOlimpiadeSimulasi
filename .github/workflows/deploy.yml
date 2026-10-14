@@ -1,110 +1,31 @@
 
-      - name: Build semua simulasi
-        run: npm run build
-
-      - name: Siapkan artifact GitHub Pages
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          rm -rf site
-          mkdir -p site
-          touch site/.nojekyll
-
-          cat > site/index.html <<'HTML'
-          <!doctype html>
-          <html lang="id">
-          <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>SuKa Olimpiade Fisika — Simulasi</title>
-            <style>
-              * { box-sizing: border-box; }
-              body {
-                margin: 0;
-                font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-                background: #f8fafc;
-                color: #0f172a;
-              }
-              main {
-                width: min(960px, calc(100% - 32px));
-                margin: 0 auto;
-                padding: 48px 0;
-              }
-              h1 { margin: 0 0 8px; }
-              p { color: #64748b; margin: 0 0 28px; }
-              .grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-                gap: 14px;
-              }
-              a {
-                display: block;
-                padding: 18px;
-                border: 1px solid #e2e8f0;
-                border-radius: 14px;
-                background: white;
-                color: #0f172a;
-                text-decoration: none;
-                font-weight: 700;
-              }
-              a:hover { border-color: #94a3b8; }
-            </style>
-          </head>
-          <body>
-            <main>
-              <h1>SuKa Olimpiade Fisika</h1>
-              <p>Pilih simulasi yang ingin dibuka.</p>
-              <div class="grid">
-                <a href="./parabola/">Gerak Parabola</a>
-                <a href="./bidang-miring/">Gaya Gesek Bidang Miring</a>
-                <a href="./tumbukan/">Tumbukan</a>
-                <a href="./melingkar/">Gerak Melingkar</a>
-                <a href="./hooke/">Hukum Hooke</a>
-                <a href="./venturi/">Fluida / Pancaran</a>
-                <a href="./bandul/">Bandul Matematis</a>
-                <a href="./gelombang/">Gelombang</a>
-                <a href="./kalor/">Kalor & Perubahan Wujud</a>
-              </div>
-            </main>
-          </body>
-          </html>
-          HTML
-
-          APPS=(
-            parabola
-            bidang-miring
-            tumbukan
-            melingkar
-            hooke
-            venturi
-            bandul
-            gelombang
-            kalor
-          )
-
           for app in "${APPS[@]}"; do
             echo "Menyiapkan $app ..."
 
             if [ ! -f "apps/$app/dist/index.html" ]; then
-              echo "ERROR: apps/$app/dist/index.html tidak ditemukan."
+              echo "::error::apps/$app/dist/index.html tidak ditemukan."
               exit 1
             fi
 
             mkdir -p "site/$app"
-            cp -R "apps/$app/dist/." "site/$app/"
+            cp -a "apps/$app/dist/." "site/$app/"
 
             if [ ! -f "site/$app/index.html" ]; then
-              echo "ERROR: site/$app/index.html gagal dibuat."
+              echo "::error::site/$app/index.html gagal dibuat."
               exit 1
             fi
           done
 
-          echo ""
-          echo "Isi artifact:"
-          find site -maxdepth 2 -type f | sort
+          echo "=== Verifikasi hasil Pages ==="
+          test -f site/index.html
+          echo "OK /index.html"
 
-      - name: Configure Pages
+          for app in "${APPS[@]}"; do
+            test -f "site/$app/index.html"
+            echo "OK /$app/index.html"
+          done
+
+      - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
       - name: Upload Pages artifact
@@ -113,14 +34,18 @@
           path: ./site
 
   deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    permissions:
+      pages: write
+      id-token: write
+
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
 
-    runs-on: ubuntu-latest
-    needs: build
-
     steps:
-      - name: Deploy to GitHub Pages
+      - name: Deploy ke GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
