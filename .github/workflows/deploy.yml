@@ -1,9 +1,6 @@
 
-          for app in "${APPS[@]}"; do
-            echo "Menyiapkan $app ..."
-
             if [ ! -f "apps/$app/dist/index.html" ]; then
-              echo "::error::apps/$app/dist/index.html tidak ditemukan."
+              echo "::error::apps/$app/dist/index.html tidak ditemukan"
               exit 1
             fi
 
@@ -11,19 +8,20 @@
             cp -a "apps/$app/dist/." "site/$app/"
 
             if [ ! -f "site/$app/index.html" ]; then
-              echo "::error::site/$app/index.html gagal dibuat."
+              echo "::error::site/$app/index.html gagal dibuat"
               exit 1
             fi
           done
 
-          echo "=== Verifikasi hasil Pages ==="
+          echo "=== Verifikasi file penting ==="
           test -f site/index.html
-          echo "OK /index.html"
-
           for app in "${APPS[@]}"; do
             test -f "site/$app/index.html"
-            echo "OK /$app/index.html"
+            echo "OK: site/$app/index.html"
           done
+
+          echo "=== Daftar index yang akan dideploy ==="
+          find site -maxdepth 2 -name index.html -type f | sort
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
@@ -46,6 +44,6 @@
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - name: Deploy ke GitHub Pages
+      - name: Deploy GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
