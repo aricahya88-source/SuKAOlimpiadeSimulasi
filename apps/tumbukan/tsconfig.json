@@ -12,7 +12,7 @@
     "esModuleInterop": true,
     "noEmit": true,
     "strict": true,
-    "types": ["@types/webxr"]
+    "types": ["webxr"]
   },
   "include": ["src"]
 }

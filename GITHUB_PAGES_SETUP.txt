@@ -1,0 +1,26 @@
+SETUP GITHUB PAGES - SuKa Olimpiade Fisika
+
+1. Upload/replace seluruh isi repository dengan paket ini.
+2. Pastikan file workflow berada di:
+   .github/workflows/deploy.yml
+3. Buka GitHub repository -> Settings -> Pages.
+4. Pada Build and deployment -> Source pilih: GitHub Actions.
+   JANGAN pilih Deploy from a branch.
+5. Commit/push ke branch main.
+6. Buka tab Actions dan tunggu workflow:
+   Deploy 9 Simulasi ke GitHub Pages
+   sampai job build dan deploy sama-sama hijau.
+
+Halaman utama:
+https://aricahya88-source.github.io/SuKAOlimpiadeSimulasi/
+
+Simulasi:
+https://aricahya88-source.github.io/SuKAOlimpiadeSimulasi/parabola/
+https://aricahya88-source.github.io/SuKAOlimpiadeSimulasi/bidang-miring/
+https://aricahya88-source.github.io/SuKAOlimpiadeSimulasi/tumbukan/
+https://aricahya88-source.github.io/SuKAOlimpiadeSimulasi/melingkar/
+https://aricahya88-source.github.io/SuKAOlimpiadeSimulasi/hooke/
+https://aricahya88-source.github.io/SuKAOlimpiadeSimulasi/venturi/
+https://aricahya88-source.github.io/SuKAOlimpiadeSimulasi/bandul/
+https://aricahya88-source.github.io/SuKAOlimpiadeSimulasi/gelombang/
+https://aricahya88-source.github.io/SuKAOlimpiadeSimulasi/kalor/
