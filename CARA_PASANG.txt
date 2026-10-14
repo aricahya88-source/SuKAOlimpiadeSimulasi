@@ -1,0 +1,50 @@
+PERBAIKAN NETLIFY - 9 SIMULASI
+
+Masukkan file berikut ke repository:
+
+1. netlify.toml
+   Letakkan di ROOT repository, sejajar dengan:
+   - package.json
+   - package-lock.json
+   - index.html
+   - apps/
+   - scripts/
+
+2. scripts/prepare-netlify.mjs
+   Letakkan di folder scripts/.
+
+Struktur:
+/
+├── apps/
+├── scripts/
+│   ├── build-all.mjs
+│   └── prepare-netlify.mjs
+├── index.html
+├── netlify.toml
+├── package.json
+└── package-lock.json
+
+Setelah commit/push ke main, Netlify akan:
+1. npm run build
+2. build seluruh 9 simulasi
+3. membuat site/
+4. menyalin index.html utama
+5. menyalin setiap apps/<simulasi>/dist ke site/<simulasi>/
+6. publish folder site/
+
+PENTING:
+Jika Netlify UI masih berisi Publish directory = dist,
+hapus/clear nilai itu jika diperlukan. Dengan netlify.toml terbaru,
+publish yang diinginkan adalah "site".
+
+URL hasil:
+/
+ /parabola/
+ /bidang-miring/
+ /tumbukan/
+ /melingkar/
+ /hooke/
+ /venturi/
+ /bandul/
+ /gelombang/
+ /kalor/
