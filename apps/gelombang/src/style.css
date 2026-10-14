@@ -1,1 +1,221 @@
 :root{--bg:#f4f7f9;--panel:#fff;--line:#d7e0e5;--muted:#52636b;--text:#17252b;--lime:#9ebd26;--cyan:#2f9db0}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color-scheme:light}.shell{max-width:1600px;margin:auto;padding:18px 26px 24px}header,.stagebar,footer{display:flex;align-items:center;justify-content:space-between}header{border-bottom:1px solid var(--line);padding-bottom:14px}.brand{display:flex;gap:10px;align-items:center}.mark{display:grid;place-items:center;width:32px;height:32px;border:1px solid var(--cyan);color:#267f90;border-radius:5px;font-weight:700}.brand b{display:block;font-size:15px}.brand small,footer{font:10px ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--muted);letter-spacing:.05em}.ghost,.secondary{background:#fff;border:1px solid var(--line);color:var(--text);border-radius:5px;padding:9px 11px;font-size:11px;cursor:pointer}.layout{display:grid;grid-template-columns:500px minmax(0,1fr);gap:14px;margin-top:14px;align-items:start}.left{display:grid;grid-template-columns:262px 224px;gap:14px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:7px}.controls,.analysis{padding:14px}.eyebrow,.tag{color:#789510;font:10px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.12em}.actions{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:12px 0}.primary{border:0;background:#b8d643;color:#17210a;font-weight:700;border-radius:5px;padding:10px;font-size:11px;cursor:pointer}.controls>label{display:block;color:var(--muted);font-size:10px;margin:13px 0}.controls output{float:right;color:var(--text);font:11px ui-monospace,SFMono-Regular,Menlo,monospace}.controls input[type=range]{display:block;width:100%;accent-color:#9ebd26;margin-top:8px}.selectLabel select{display:block;width:100%;margin-top:7px;border:1px solid var(--line);background:#f7fafb;color:var(--text);border-radius:5px;padding:9px;font-size:12px}.stats{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:12px}.stats div{background:#f3f7f8;padding:9px;border-left:2px solid #c6d5da;border-radius:3px}.stats span,.stats small{display:block;color:var(--muted);font-size:9px}.stats b{display:block;font:15px ui-monospace,SFMono-Regular,Menlo,monospace;margin:4px 0;color:var(--text)}.formula{border-top:1px solid var(--line);margin-top:10px;padding-top:10px;color:var(--muted);font-size:10px;display:grid;gap:7px}.formula b{color:#789510}.stage{padding:14px;min-width:0}.stagebar{font:10px ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--muted);margin-bottom:9px}.stagebar span:last-child{color:#789510}.viewport{position:relative;aspect-ratio:16/9;border:1px solid #27363b;overflow:hidden;background:#0d1215;color-scheme:dark;border-radius:4px}.viewport canvas{display:block;width:100%;height:100%}.hud{position:absolute;z-index:2;top:10px;left:12px;right:12px;display:flex;justify-content:space-between;color:#a9babd;font:10px ui-monospace,SFMono-Regular,Menlo,monospace;pointer-events:none}.hud span:first-child{color:#65d8e3}.legend{font-size:10px;color:var(--muted);padding-top:9px}.question{background:#f3f7f8;border-left:2px solid var(--cyan);padding:10px;margin-top:12px;color:var(--muted);font-size:11px;line-height:1.5}.question b{color:#267f90}.question p{margin:5px 0 0}footer{border-top:1px solid var(--line);margin-top:16px;padding-top:12px}@media(max-width:1120px){.layout{grid-template-columns:1fr}.left{grid-template-columns:1fr 1fr}}@media(max-width:650px){.shell{padding:12px}.left{grid-template-columns:1fr}.brand small{display:none}.hud{font-size:9px}}
+
+
+/* =========================================================
+   SuKa embedded-question mode
+   Seluruh pengubah variabel dipindahkan ke dalam viewport.
+   ========================================================= */
+html.controls-inside-frame .viewport {
+  isolation:isolate;
+}
+html.controls-inside-frame .frame-controls-toggle {
+  position:absolute;
+  top:10px;
+  right:10px;
+  z-index:70;
+  border:1px solid rgba(215,224,229,.96);
+  border-radius:8px;
+  background:rgba(255,255,255,.96);
+  color:#17252b;
+  padding:8px 10px;
+  font:700 10px/1.1 ui-monospace,SFMono-Regular,Menlo,monospace;
+  letter-spacing:.02em;
+  box-shadow:0 8px 24px rgba(0,0,0,.18);
+  cursor:pointer;
+  color-scheme:light;
+}
+html.controls-inside-frame .frame-controls-toggle:hover,
+html.controls-inside-frame .frame-controls-toggle.is-open {
+  border-color:#9ebd26;
+  background:#f7faf2;
+}
+html.controls-inside-frame .viewport > .frame-controls-panel {
+  position:absolute !important;
+  top:48px !important;
+  right:10px !important;
+  left:auto !important;
+  z-index:65 !important;
+  width:min(310px,calc(100% - 20px)) !important;
+  max-height:calc(100% - 60px) !important;
+  overflow:auto !important;
+  overscroll-behavior:contain;
+  margin:0 !important;
+  padding:14px !important;
+  border:1px solid rgba(215,224,229,.98) !important;
+  border-radius:10px !important;
+  background:rgba(255,255,255,.97) !important;
+  color:#17252b !important;
+  box-shadow:0 14px 38px rgba(0,0,0,.26);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  color-scheme:light !important;
+  transform:translateX(0);
+  opacity:1;
+  transition:transform .18s ease,opacity .18s ease;
+  scrollbar-width:thin;
+}
+html.controls-inside-frame .viewport > .frame-controls-panel.frame-controls-hidden {
+  transform:translateX(calc(100% + 28px));
+  opacity:0;
+  pointer-events:none;
+}
+html.controls-inside-frame .viewport > .frame-controls-panel,
+html.controls-inside-frame .viewport > .frame-controls-panel * {
+  color-scheme:light;
+}
+html.controls-inside-frame .viewport > .frame-controls-panel .eyebrow,
+html.controls-inside-frame .viewport > .frame-controls-panel h2 {
+  color:#6f8b12 !important;
+}
+html.controls-inside-frame .viewport > .frame-controls-panel h1,
+html.controls-inside-frame .viewport > .frame-controls-panel label,
+html.controls-inside-frame .viewport > .frame-controls-panel output,
+html.controls-inside-frame .viewport > .frame-controls-panel .intro {
+  color:#17252b !important;
+}
+html.controls-inside-frame .viewport > .frame-controls-panel .intro {
+  color:#52636b !important;
+}
+html.controls-inside-frame .viewport > .frame-controls-panel input[type=range] {
+  width:100%;
+}
+html.controls-inside-frame .viewport > .frame-controls-panel select {
+  background:#f7fafb !important;
+  color:#17252b !important;
+  border-color:#d7e0e5 !important;
+}
+html.controls-inside-frame .viewport > .frame-controls-panel .secondary,
+html.controls-inside-frame .viewport > .frame-controls-panel .modes button {
+  background:#f3f7f8 !important;
+  color:#17252b !important;
+  border-color:#d7e0e5 !important;
+}
+html.controls-inside-frame .viewport > .frame-controls-panel .modes button.active {
+  border-color:#9ebd26 !important;
+  background:#eef6d6 !important;
+}
+
+/* Setelah panel kontrol masuk viewport, ruang halaman dipakai untuk simulasi + analisis. */
+html.controls-inside-frame .workspace {
+  grid-template-columns:minmax(0,1fr) !important;
+}
+html.controls-inside-frame .workspace > .stage {
+  grid-column:1/-1 !important;
+}
+html.controls-inside-frame .layout {
+  grid-template-columns:260px minmax(0,1fr) !important;
+}
+html.controls-inside-frame .layout > .stage {
+  grid-column:auto !important;
+}
+html.controls-inside-frame .left {
+  display:block !important;
+}
+html.controls-inside-frame .left > .analysis {
+  width:100% !important;
+}
+html.controls-inside-frame .hooke-layout {
+  grid-template-columns:260px minmax(0,1fr) !important;
+}
+html.controls-inside-frame .sidebar {
+  display:block !important;
+}
+
+@media (max-width:900px) {
+  html.controls-inside-frame .layout,
+  html.controls-inside-frame .hooke-layout {
+    display:flex !important;
+    flex-direction:column !important;
+  }
+  html.controls-inside-frame .layout > .stage,
+  html.controls-inside-frame .hooke-layout > .stage {
+    order:-1;
+    width:100% !important;
+  }
+  html.controls-inside-frame .left,
+  html.controls-inside-frame .sidebar,
+  html.controls-inside-frame .analysis {
+    width:100% !important;
+  }
+}
+
+@media (max-width:680px) {
+  html.controls-inside-frame .frame-controls-toggle {
+    top:8px;
+    right:8px;
+  }
+  html.controls-inside-frame .viewport > .frame-controls-panel {
+    top:46px !important;
+    left:8px !important;
+    right:8px !important;
+    width:auto !important;
+    max-height:calc(100% - 54px) !important;
+    padding:11px !important;
+  }
+}
+
+
+/* Saat URL dibuka sebagai iframe pada sistem soal, viewport menjadi isi utama frame. */
+html.simulation-embedded,
+html.simulation-embedded body {
+  width:100%;
+  height:100%;
+  margin:0;
+  overflow:hidden;
+  background:#0d1215 !important;
+}
+html.simulation-embedded .shell,
+html.simulation-embedded .app-shell {
+  width:100% !important;
+  height:100% !important;
+  max-width:none !important;
+  margin:0 !important;
+  padding:0 !important;
+}
+html.simulation-embedded header,
+html.simulation-embedded footer,
+html.simulation-embedded .analysis,
+html.simulation-embedded .stagebar,
+html.simulation-embedded .stage-top,
+html.simulation-embedded .legend,
+html.simulation-embedded .question,
+html.simulation-embedded .plot-section {
+  display:none !important;
+}
+html.simulation-embedded main,
+html.simulation-embedded .workspace,
+html.simulation-embedded .layout,
+html.simulation-embedded .hooke-layout {
+  width:100% !important;
+  height:100% !important;
+  display:block !important;
+  margin:0 !important;
+  padding:0 !important;
+}
+html.simulation-embedded .left,
+html.simulation-embedded .sidebar {
+  display:none !important;
+}
+html.simulation-embedded .stage {
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  margin:0 !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+}
+html.simulation-embedded .viewport {
+  width:100% !important;
+  height:100% !important;
+  min-height:0 !important;
+  aspect-ratio:auto !important;
+  margin:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+}
+html.simulation-embedded .viewport canvas {
+  width:100% !important;
+  height:100% !important;
+}

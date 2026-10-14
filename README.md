@@ -24,6 +24,33 @@ Satu repository berisi **sembilan** simulasi fisika interaktif berbasis Three.js
 - **Gelombang:** tersedia Gelombang Berjalan, Gelombang Stasioner Ujung Terikat, dan Gelombang Stasioner Ujung Bebas dengan visual kondisi batas yang berbeda.
 - **Kalor:** wadah transparan, pemanas, partikel termal, es, proses mencair, air cair, mendidih/menguap, dan uap. Model menggunakan kalor sensibel dan kalor laten sehingga suhu tertahan pada 0 °C dan 100 °C saat perubahan wujud.
 
+
+## Mode iframe untuk sistem soal
+
+Seluruh **pengubah variabel** pada sembilan simulasi sekarang berada **di dalam viewport simulasi** melalui panel **⚙ Parameter**. Saat URL simulasi dibuka di dalam `<iframe>`, aplikasi otomatis masuk mode embed:
+
+- viewport memenuhi area iframe;
+- header, footer, analisis luar, legenda, dan bagian non-esensial disembunyikan;
+- semua slider, select, tombol mode, Terapkan/Jeda, dan parameter fisika tetap tersedia sebagai overlay di dalam frame;
+- pada frame sempit panel parameter dapat dibuka/ditutup agar animasi tetap terlihat;
+- tidak perlu membuat URL khusus untuk embed karena mode iframe terdeteksi otomatis.
+
+Parameter URL opsional:
+
+- `?embed=1` memaksa mode embed walaupun dibuka langsung di browser;
+- `?controls=open` memaksa panel parameter terbuka;
+- `?controls=closed` memaksa panel parameter tertutup saat awal.
+
+Contoh untuk sistem soal:
+
+```html
+<iframe
+  src="https://aricahya88-source.github.io/SuKAOlimpiadeSimulasi/tumbukan/"
+  style="width:100%;aspect-ratio:16/9;border:0"
+  allowfullscreen
+></iframe>
+```
+
 ## Deploy otomatis
 
 1. Unggah seluruh isi folder ini ke repository GitHub (termasuk `.github`).

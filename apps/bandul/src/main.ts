@@ -1,4 +1,5 @@
 import './style.css';
+import { mountFrameControls } from './frame-controls';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
@@ -51,6 +52,8 @@ document.body.innerHTML = `
   </main>
   <footer><span>SUKA OLIMPIADE FISIKA</span><span>Three.js · UI terang, viewport gelap</span></footer>
 </div>`;
+
+mountFrameControls();
 
 const viewport = $('#viewport');
 const scene = new THREE.Scene();
