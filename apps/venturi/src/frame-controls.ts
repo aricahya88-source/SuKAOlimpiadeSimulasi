@@ -18,8 +18,12 @@ export function mountFrameControls(): void {
   viewport.appendChild(toggle);
 
   const params = new URLSearchParams(window.location.search);
-  const embedded = window.parent !== window || params.get('embed') === '1';
-  if (embedded) document.documentElement.classList.add('simulation-embedded');
+
+  // Frame-only adalah tampilan default, baik dibuka langsung maupun melalui iframe.
+  // Dengan demikian halaman simulasi tidak menampilkan header, judul, keterangan,
+  // analisis, legenda, atau footer di luar viewport.
+  document.documentElement.classList.add('simulation-embedded');
+  document.documentElement.classList.add('simulation-frame-only');
 
   let open = viewport.clientWidth >= 760;
   if (params.get('controls') === 'open') open = true;

@@ -219,3 +219,98 @@ html.simulation-embedded .viewport canvas {
   width:100% !important;
   height:100% !important;
 }
+
+/* =========================================================
+   SuKa frame-only default
+   Saat simulasi dibuka langsung maupun melalui iframe,
+   hanya viewport simulasi yang tampil. Semua judul/keterangan
+   halaman di luar viewport disembunyikan.
+   ========================================================= */
+html.simulation-frame-only,
+html.simulation-frame-only body,
+html.simulation-frame-only #app {
+  width:100% !important;
+  height:100% !important;
+  min-height:100% !important;
+  margin:0 !important;
+  padding:0 !important;
+  overflow:hidden !important;
+  background:#0d1215 !important;
+}
+
+html.simulation-frame-only header,
+html.simulation-frame-only footer,
+html.simulation-frame-only .analysis,
+html.simulation-frame-only .stagebar,
+html.simulation-frame-only .stage-top,
+html.simulation-frame-only .legend,
+html.simulation-frame-only .question,
+html.simulation-frame-only .plot-section,
+html.simulation-frame-only .workspace + .formula {
+  display:none !important;
+}
+
+html.simulation-frame-only .shell,
+html.simulation-frame-only .app-shell,
+html.simulation-frame-only main,
+html.simulation-frame-only .workspace,
+html.simulation-frame-only .layout,
+html.simulation-frame-only .hooke-layout,
+html.simulation-frame-only .stage {
+  width:100% !important;
+  height:100% !important;
+  min-height:0 !important;
+  max-width:none !important;
+  margin:0 !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  display:block !important;
+  background:transparent !important;
+}
+
+html.simulation-frame-only .left,
+html.simulation-frame-only .sidebar {
+  width:auto !important;
+  height:auto !important;
+  margin:0 !important;
+  padding:0 !important;
+  border:0 !important;
+  background:transparent !important;
+}
+
+html.simulation-frame-only .viewport {
+  position:relative !important;
+  width:100% !important;
+  height:100% !important;
+  min-height:100% !important;
+  max-height:none !important;
+  aspect-ratio:auto !important;
+  margin:0 !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  overflow:hidden !important;
+}
+
+html.simulation-frame-only .viewport canvas,
+html.simulation-frame-only .viewport > canvas {
+  width:100% !important;
+  height:100% !important;
+  display:block !important;
+}
+
+/* Hilangkan judul/deskripsi di dalam panel parameter; label variabel tetap tampil. */
+html.simulation-frame-only .viewport > .frame-controls-panel > .eyebrow,
+html.simulation-frame-only .viewport > .frame-controls-panel > h1,
+html.simulation-frame-only .viewport > .frame-controls-panel > .intro,
+html.simulation-frame-only .viewport > .frame-controls-panel > .hint,
+html.simulation-frame-only .viewport > .frame-controls-panel > .panel-head,
+html.simulation-frame-only .viewport > .frame-controls-panel > .head {
+  display:none !important;
+}
+
+/* Panel parameter tetap menjadi bagian dari frame, tidak membuat halaman memanjang. */
+html.simulation-frame-only .viewport > .frame-controls-panel {
+  box-sizing:border-box !important;
+}
